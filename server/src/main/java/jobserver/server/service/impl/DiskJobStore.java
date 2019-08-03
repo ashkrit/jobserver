@@ -77,17 +77,24 @@ public class DiskJobStore implements JobStore {
     @Override
     public void recordStage(JobStageInfo newStageInfo) {
 
-        Path jobPath = Paths.get(storeLocation, newStageInfo.getJobId());
-        failIfJobDoesNotExists(newStageInfo.getJobId(), jobPath);
+        String jobId = newStageInfo.getJobId();
+        Path jobPath = Paths.get(storeLocation, jobId);
 
-        cache.computeIfAbsent(newStageInfo.getJobId(), key -> {
-            File jobInfoFile = new File(jobPath.toFile(), JOB_INFO_FILE);
-            logger.info("Job info will be read from {}", jobInfoFile.getAbsolutePath());
-            byte[] data = read(jobInfoFile.toPath());
-            return fromJson(data, RegisterJobInfo.class);
-        });
+        failIfJobDoesNotExists(jobId, jobPath);
 
-        RegisterJobInfo job = cache.get(newStageInfo.getJobId());
+        RegisterJobInfo job = loadJobInfo(jobId, jobPath);
+
+        saveJobStage(newStageInfo, jobPath, job);
+        subscriptionHandler.notifySubscriber(job, newStageInfo);
+
+    }
+
+    private RegisterJobInfo loadJobInfo(String jobId, Path jobPath) {
+        cache.computeIfAbsent(jobId, key -> loadJobInfo(jobPath));
+        return cache.get(jobId);
+    }
+
+    private void saveJobStage(JobStageInfo newStageInfo, Path jobPath, RegisterJobInfo job) {
         synchronized (job) {
             File stageInfoFile = new File(jobPath.toFile(), STAGE_INFO_FILE);
             JobStages stages = getOrNewJobStage(stageInfoFile);
@@ -95,8 +102,13 @@ public class DiskJobStore implements JobStore {
             logger.info("Job stage info will be written to {}", stageInfoFile.getAbsolutePath());
             write(stageInfoFile.toPath(), () -> JsonConverter.toJson(stages).getBytes());
         }
-        subscriptionHandler.notifySubscriber(job, newStageInfo);
+    }
 
+    private RegisterJobInfo loadJobInfo(Path jobPath) {
+        File jobInfoFile = new File(jobPath.toFile(), JOB_INFO_FILE);
+        logger.info("Job info will be read from {}", jobInfoFile.getAbsolutePath());
+        byte[] data = read(jobInfoFile.toPath());
+        return fromJson(data, RegisterJobInfo.class);
     }
 
     private void addNewStage(JobStageInfo newStageInfo, JobStages stages) {
@@ -131,7 +143,7 @@ public class DiskJobStore implements JobStore {
     private void failIfJobDoesNotExists(String jobId, Path jobPath) {
         logger.info("Checking job {}", jobPath.toFile().getAbsolutePath());
         if (!jobPath.toFile().exists()) {
-            throw new IllegalArgumentException(String.format("Job is already registered %s", jobId));
+            throw new IllegalArgumentException(String.format("Job %s is not registered", jobId));
         }
     }
 

@@ -14,11 +14,11 @@ public class JobServerClientApplication {
 
         JobServerClient client = JobServerClient.create("http://localhost:8080/");
 
-        String jobId = "20190804_FXUPDATE_RUN2";
+        String jobId = "20190804_FXUPDATE_RUN3";
         String value = "http://localhost:8080/jobserver/callback/stage";
 
         RegisterJobInfo job = createNewJob(jobId, value);
-        client.registerJob(job);
+        //client.registerJob(job);
 
         JobStageInfo stage = new JobStageInfo();
         stage.setJobId(jobId);
