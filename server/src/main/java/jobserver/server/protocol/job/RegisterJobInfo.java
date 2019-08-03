@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class RegisterJobInfo {
+
     private String jobId;
     private String category;
     private List<Subscription> subscriptions;
+    private NotificationInfo notification;
+
     private LocalDateTime timestamp;
 
     public void setCategory(String category) {
@@ -39,5 +42,13 @@ public class RegisterJobInfo {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public void setNotification(NotificationInfo notification) {
+        this.notification = notification;
+    }
+
+    public NotificationInfo getNotification() {
+        return notification;
     }
 }

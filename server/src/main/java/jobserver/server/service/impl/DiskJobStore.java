@@ -1,10 +1,11 @@
 package jobserver.server.service.impl;
 
 import jobserver.server.json.JsonConverter;
-import jobserver.server.lang.Exceptions;
+import jobserver.server.lang.RaiseExceptions;
 import jobserver.server.protocol.job.JobStageInfo;
 import jobserver.server.protocol.job.RegisterJobInfo;
 import jobserver.server.service.JobStore;
+import jobserver.server.service.subscription.SubscriptionHandler;
 import org.slf4j.Logger;
 import org.springframework.core.env.Environment;
 
@@ -27,11 +28,14 @@ public class DiskJobStore implements JobStore {
     private static Logger logger = getLogger(DiskJobStore.class);
 
     private final Environment environment;
+    private final SubscriptionHandler subscriptionHandler;
     private final ConcurrentHashMap<String, RegisterJobInfo> cache = new ConcurrentHashMap<>();
+
     private String storeLocation;
 
-    public DiskJobStore(Environment environment) {
+    public DiskJobStore(Environment environment, SubscriptionHandler subscriptionHandler) {
         this.environment = environment;
+        this.subscriptionHandler = subscriptionHandler;
         this.storeLocation = this.environment.getProperty("jobserver.store.location");
         logger.info("Store location {}", storeLocation);
 
@@ -66,7 +70,7 @@ public class DiskJobStore implements JobStore {
         try {
             Files.write(location, dataSupplier.get());
         } catch (Exception e) {
-            Exceptions.raise(e);
+            RaiseExceptions.raise(e);
         }
     }
 
@@ -85,13 +89,13 @@ public class DiskJobStore implements JobStore {
 
         RegisterJobInfo job = cache.get(newStageInfo.getJobId());
         synchronized (job) {
-
             File stageInfoFile = new File(jobPath.toFile(), STAGE_INFO_FILE);
             JobStages stages = getOrNewJobStage(stageInfoFile);
             addNewStage(newStageInfo, stages);
             logger.info("Job stage info will be written to {}", stageInfoFile.getAbsolutePath());
             write(stageInfoFile.toPath(), () -> JsonConverter.toJson(stages).getBytes());
         }
+        subscriptionHandler.notifySubscriber(job, newStageInfo);
 
     }
 
@@ -112,7 +116,7 @@ public class DiskJobStore implements JobStore {
         try {
             return Files.readAllBytes(location);
         } catch (Exception e) {
-            Exceptions.raise(e);
+            RaiseExceptions.raise(e);
         }
         return null;
     }
