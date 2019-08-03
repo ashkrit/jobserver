@@ -1,0 +1,44 @@
+package jobserver.client.protocol;
+
+import java.util.Map;
+
+public class JobStageInfo {
+
+    private String jobId;
+    private String stageName;
+    private String eventName;
+    private Map<String, String> properties;
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public void setStageName(String stageName) {
+        this.stageName = stageName;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public String getStageName() {
+        return stageName;
+    }
+
+}
