@@ -6,6 +6,7 @@ import java.util.List;
 public class RegisterJobInfo {
 
     private String jobId;
+    private String jobName;
     private String category;
     private List<Subscription> subscriptions;
     private NotificationInfo notification;
@@ -50,5 +51,13 @@ public class RegisterJobInfo {
 
     public NotificationInfo getNotification() {
         return notification;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public String getJobName() {
+        return jobName;
     }
 }
