@@ -55,7 +55,7 @@ With some extra context in job
 Code snippet from JobServerClientApplication.java
 
 ```
-JobServerClient client = JobServerClient.create("http://localhost:8080/");
+JobServerClient client = JobServerClient.defaultClient("http://localhost:8080/");
 
         String jobId = "20190804_FXUPDATE_RUN2";
         String value = "http://localhost:8080/jobserver/callback/stage";
