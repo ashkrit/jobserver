@@ -1,15 +1,15 @@
 package jobserver.server.resource;
 
+import jobserver.server.protocol.job.AllJobsResponse;
 import jobserver.server.protocol.job.JobStageInfo;
+import jobserver.server.protocol.job.JobStagesResponse;
 import jobserver.server.protocol.job.RegisterJobInfo;
+import jobserver.server.service.JobStages;
 import jobserver.server.service.JobStoreService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -28,6 +28,11 @@ public class JobResource {
         return String.format("You are connected to Job server %s", instanceName());
     }
 
+    @GetMapping("/jobs")
+    AllJobsResponse allJobs() {
+        return AllJobsResponse.create(jobStore.jobs());
+    }
+
     @PostMapping("/jobs/registerJob")
     void registerJob(@RequestBody RegisterJobInfo newJobRequest) {
 
@@ -37,10 +42,21 @@ public class JobResource {
     }
 
     @PostMapping("/jobs/stage")
-    void registerJob(@RequestBody JobStageInfo newStageInfo) {
+    void onStageUpdate(@RequestBody JobStageInfo newStageInfo) {
 
         logger.info("Received request for job {} stage {} ", newStageInfo.getJobId(), newStageInfo.getStageName());
         jobStore.recordStage(newStageInfo);
+
+    }
+
+    @GetMapping("/jobs/stage/{id}")
+    JobStagesResponse jobStageById(@PathVariable String id) {
+
+        logger.info("Received request for job {} ", id);
+        RegisterJobInfo job = jobStore.job(id);
+        JobStages stages = jobStore.stages(id);
+
+        return JobStagesResponse.create(job, stages.getStages());
 
     }
 

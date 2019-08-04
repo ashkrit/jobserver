@@ -2,7 +2,7 @@ package jobserver.client.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static jobserver.client.lang.RaiseExceptions.raise;
+import static jobserver.client.lang.Panic.raise;
 
 public class JsonConverter {
 

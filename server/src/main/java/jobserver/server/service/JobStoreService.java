@@ -9,6 +9,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -42,5 +43,17 @@ public class JobStoreService {
 
     public void recordStage(JobStageInfo newStageInfo) {
         jobStore.recordStage(newStageInfo);
+    }
+
+    public List<RegisterJobInfo> jobs() {
+        return jobStore.jobs();
+    }
+
+    public JobStages stages(String id) {
+        return jobStore.stages(id);
+    }
+
+    public RegisterJobInfo job(String id) {
+        return jobStore.job(id);
     }
 }

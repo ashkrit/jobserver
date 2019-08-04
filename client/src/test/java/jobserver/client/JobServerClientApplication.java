@@ -18,7 +18,7 @@ public class JobServerClientApplication {
         String value = "http://localhost:8080/jobserver/callback/stage";
 
         RegisterJobInfo job = createNewJob(jobId, value);
-        //client.registerJob(job);
+        client.registerJob(job);
 
         JobStageInfo stage = new JobStageInfo();
         stage.setJobId(jobId);

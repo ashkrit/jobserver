@@ -1,6 +1,6 @@
 package jobserver.server.service.subscription;
 
-import jobserver.server.lang.RaiseExceptions;
+import jobserver.server.lang.Panic;
 import jobserver.server.protocol.job.JobStageInfo;
 import jobserver.server.protocol.job.RegisterJobInfo;
 import jobserver.server.protocol.job.Subscription;
@@ -22,23 +22,26 @@ public class SubscriptionHandler {
 
     public void notifySubscriber(RegisterJobInfo job, JobStageInfo stage) {
 
-        CompletableFuture<Void> completableFuture = supplyAsync(() -> {
-            logger.info("Sending notification for job {}", job.getJobId());
-            List<Subscription> listeners = job.getSubscriptions();
-            listeners.forEach(endPoint -> handleSingleSubscription(stage, endPoint));
-            return null;
-        }).thenAccept((x) -> {
-            logger.info("Notification for job {} , stage {} completed", job.getJobId(), stage.getStageName());
-        });
+        CompletableFuture<Void> completableFuture =
+                supplyAsync(() -> notifyDownStream(job, stage))
+                        .thenAccept((x) -> logger.info("Notification for job {} , stage {} completed", job.getJobId(), stage.getStageName()));
 
-        completableFuture.exceptionally(x -> {
+        completableFuture.exceptionally(oops -> {
             String errorMessage = String.format("Error in handling Job %s , Stage %s", job.getJobId(), stage.getStageName());
-            logger.error(errorMessage, x);
-            if (job.getNotification() != null) {
+            logger.error(errorMessage, oops);
 
+            if (job.getNotification() != null) {
+                //TODO: Send email notification of push notification fails
             }
             return null;
         });
+    }
+
+    private Object notifyDownStream(RegisterJobInfo job, JobStageInfo stage) {
+        logger.info("Sending notification for job {}", job.getJobId());
+        List<Subscription> listeners = job.getSubscriptions();
+        listeners.forEach(endPoint -> handleSingleSubscription(stage, endPoint));
+        return null;
     }
 
     private void handleSingleSubscription(JobStageInfo stage, Subscription endPoint) {
@@ -55,7 +58,7 @@ public class SubscriptionHandler {
             String reply = template.postForObject(restEndpoint, stage, String.class);
             logger.info("Reply from {} is {}", restEndpoint, reply);
         } catch (Exception e) {
-            RaiseExceptions.raise(e);
+            Panic.raise(e);
         }
     }
 

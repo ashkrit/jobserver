@@ -1,7 +1,7 @@
 package jobserver.client;
 
 import jobserver.client.json.JsonConverter;
-import jobserver.client.lang.RaiseExceptions;
+import jobserver.client.lang.Panic;
 import jobserver.client.protocol.JobStageInfo;
 import jobserver.client.protocol.RegisterJobInfo;
 
@@ -9,6 +9,10 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/*
+    This client is written in lower level http connection API to reduce third party dependency.
+    THis client can be used from microservice or Spark job
+ */
 public class JobServerClient {
 
     private static final String POST = "POST";
@@ -65,7 +69,7 @@ public class JobServerClient {
         try {
             return readAsText(httpConnection.getInputStream());
         } catch (Exception e) {
-            RaiseExceptions.raise(e, readAsText(httpConnection.getErrorStream()));
+            Panic.raise(e, readAsText(httpConnection.getErrorStream()));
         }
         return null;
     }

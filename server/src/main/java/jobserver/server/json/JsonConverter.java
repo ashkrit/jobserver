@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static jobserver.server.lang.RaiseExceptions.raise;
+import static jobserver.server.lang.Panic.raise;
 
 public class JsonConverter {
 
