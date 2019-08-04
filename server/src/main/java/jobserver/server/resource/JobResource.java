@@ -33,6 +33,17 @@ public class JobResource {
         return AllJobsResponse.create(jobStore.jobs());
     }
 
+    @GetMapping("/jobs/stage/{id}")
+    JobStagesResponse jobStageById(@PathVariable String id) {
+
+        logger.info("Received request for job {} ", id);
+        RegisterJobInfo job = jobStore.job(id);
+        JobStages stages = jobStore.stages(id);
+
+        return JobStagesResponse.create(job, stages.getStages());
+
+    }
+
     @PostMapping("/jobs/registerJob")
     void registerJob(@RequestBody RegisterJobInfo newJobRequest) {
 
@@ -46,18 +57,6 @@ public class JobResource {
 
         logger.info("Received request for job {} stage {} ", newStageInfo.getJobId(), newStageInfo.getStageName());
         jobStore.recordStage(newStageInfo);
-
-    }
-
-    @GetMapping("/jobs/stage/{id}")
-    JobStagesResponse jobStageById(@PathVariable String id) {
-
-        logger.info("Received request for job {} ", id);
-        RegisterJobInfo job = jobStore.job(id);
-        JobStages stages = jobStore.stages(id);
-
-        return JobStagesResponse.create(job, stages.getStages());
-
     }
 
 

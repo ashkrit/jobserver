@@ -71,3 +71,19 @@ JobServerClient client = JobServerClient.create("http://localhost:8080/");
         client.stageUpdate(stage);
 
 ```
+
+### Other APIS
+
+Get all Jobs
+GET - http://localhost:8080/jobserver/jobs
+
+```
+{"jobs":[{"jobId":"20190804_FXUPDATE_RUN2","jobName":"This is Random job","category":"test","subscriptions":[{"type":"REST","properties":{"endpoint":"http://localhost:8080/jobserver/callback/stage"}}],"timestamp":"2019-08-04T03:25:32.5705388"}]}
+```
+
+Get Job Stages details
+GET - http://localhost:8080/jobserver/jobs/stage/20190804_FXUPDATE_RUN2
+
+```
+{"job":{"jobId":"20190804_FXUPDATE_RUN2","jobName":"This is Random job","category":"test","subscriptions":[{"type":"REST","properties":{"endpoint":"http://localhost:8080/jobserver/callback/stage"}}],"timestamp":"2019-08-04T03:25:32.5705388"},"stages":[{"jobId":"20190804_FXUPDATE_RUN2","stageName":"LoadFXRate","eventName":"European-Central-Bank-Started","timestamp":"2019-08-04T03:25:32.609435"},{"jobId":"20190804_FXUPDATE_RUN2","stageName":"LoadFXRate","eventName":"European-Central-Bank-Started","timestamp":"2019-08-04T03:44:18.4558119"}]}
+```
