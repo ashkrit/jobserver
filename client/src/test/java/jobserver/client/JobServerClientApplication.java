@@ -12,7 +12,7 @@ public class JobServerClientApplication {
 
     public static void main(String... args) throws Exception {
 
-        JobServerClient client = JobServerClient.create("http://localhost:8080/");
+        JobServerClient client = JobServerClient.defaultClient("http://localhost:8080/");
 
         String jobId = "20190804_FXUPDATE_RUN3";
         String value = "http://localhost:8080/jobserver/callback/stage";

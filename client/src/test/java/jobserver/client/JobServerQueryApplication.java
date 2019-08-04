@@ -9,7 +9,7 @@ public class JobServerQueryApplication {
 
     public static void main(String... args) throws Exception {
 
-        JobServerClient client = JobServerClient.create("http://localhost:8080/");
+        JobServerClient client = JobServerClient.defaultClient("http://localhost:8080/");
         JobsResponse jobs = client.jobs();
 
         System.out.println(JsonConverter.toJson(jobs));
