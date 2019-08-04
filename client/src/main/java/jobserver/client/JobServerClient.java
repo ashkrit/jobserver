@@ -2,9 +2,9 @@ package jobserver.client;
 
 import jobserver.client.json.JsonConverter;
 import jobserver.client.lang.Panic;
-import jobserver.client.protocol.AllJobsResponse;
 import jobserver.client.protocol.JobStageInfo;
 import jobserver.client.protocol.JobStagesResponse;
+import jobserver.client.protocol.JobsResponse;
 import jobserver.client.protocol.RegisterJobInfo;
 
 import java.io.*;
@@ -54,7 +54,7 @@ public class JobServerClient {
         httpConnection.disconnect();
     }
 
-    public AllJobsResponse jobs() throws Exception {
+    public JobsResponse jobs() throws Exception {
         String jobs = String.format("%s/jobs", server);
         HttpURLConnection httpConnection = createGetHttpConnection(jobs);
         int responseCode = httpConnection.getResponseCode();
@@ -62,7 +62,7 @@ public class JobServerClient {
             Panic.raise(new RuntimeException(String.format("Job server returned %s", responseCode)));
         }
         String data = readResponseData(httpConnection);
-        return JsonConverter.fromJson(data.getBytes(), AllJobsResponse.class);
+        return JsonConverter.fromJson(data.getBytes(), JobsResponse.class);
     }
 
     public JobStagesResponse jobStages(String id) throws Exception {

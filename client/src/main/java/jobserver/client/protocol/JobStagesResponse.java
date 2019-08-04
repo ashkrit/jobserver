@@ -26,10 +26,4 @@ public class JobStagesResponse {
         this.job = job;
     }
 
-    public static JobStagesResponse create(RegisterJobInfo job, List<JobStageInfo> stages) {
-        JobStagesResponse response = new JobStagesResponse();
-        response.stages = stages;
-        response.job = job;
-        return response;
-    }
 }
