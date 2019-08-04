@@ -12,7 +12,7 @@ mvn clean install
 JobServerApplication
 
 ### Run from command line
-java -jar server/target/server-1.0-SNAPSHOT.jar
+java -jar server/target/server-1.0-SNAPSHOT.jar <BR>
 java -Djobserver.store.location=/tmp/jobservertest -jar server/target/server-1.0-SNAPSHOT.jar
 
 ### Rest API examples
