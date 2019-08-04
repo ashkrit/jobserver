@@ -1,4 +1,6 @@
-RESTful interface for managing general purpose Jobs
+RESTful service for managing general purpose Jobs/Stages. Underlying storage for jobs is file system but it can easly extended to add support for more reliable storage.
+This also has support for adding subscriber for receiving stage updates, right now REST based subscription is supported.
+JobServer project was created as example for testing Stateful system using property based testing.
 
 ## Getting Started
 
