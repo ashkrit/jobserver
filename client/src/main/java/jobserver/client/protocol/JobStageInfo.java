@@ -1,5 +1,6 @@
 package jobserver.client.protocol;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class JobStageInfo {
@@ -7,7 +8,17 @@ public class JobStageInfo {
     private String jobId;
     private String stageName;
     private String eventName;
+    private LocalDateTime timestamp;
     private Map<String, String> properties;
+
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;

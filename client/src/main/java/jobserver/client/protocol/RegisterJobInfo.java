@@ -1,5 +1,6 @@
 package jobserver.client.protocol;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class RegisterJobInfo {
@@ -8,7 +9,16 @@ public class RegisterJobInfo {
     private String jobName;
     private String category;
     private List<Subscription> subscriptions;
+    private LocalDateTime timestamp;
     private NotificationInfo notification;
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
     public void setCategory(String category) {
         this.category = category;
